@@ -104,7 +104,7 @@ func Listen(httpAddr, httpsAddr, certFile, keyFile string, devMode bool, tsdbHos
 		}
 	}
 
-	baseChain := alice.New(miniProfilerMiddleware, endpointStatsMiddleware, gziphandler.GzipHandler)
+	baseChain := alice.New(miniProfilerMiddleware, endpointStatsMiddleware, gziphandler.GzipHandler, corsMiddleware)
 
 	auth, tokens, err := buildAuth(authConfig)
 	if err != nil {

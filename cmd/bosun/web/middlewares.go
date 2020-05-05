@@ -44,6 +44,21 @@ var endpointStatsMiddleware = func(next http.Handler) http.Handler {
 	})
 }
 
+var corsMiddleware = func(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != "OPTIONS" {
+			next.ServeHTTP(w, r)
+			return
+		}
+
+		// Faking allowed methods since we can't know them
+		w.Header().Set("Allow", "POST, PUT, GET, OPTIONS, DELETE")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, PUT, GET, OPTIONS, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "X-Access-Token")
+		w.Header().Set("Access-Control-Max-Age", "300")
+	})
+}
+
 type noopAuth struct{}
 
 func (n noopAuth) GetUser(r *http.Request) (*easyauth.User, error) {

@@ -17,6 +17,7 @@ type Silence struct {
 	Forget     bool
 	User       string
 	Message    string
+	CachedId   string `json:"-"`
 }
 
 func (s *Silence) Silenced(now time.Time, alert string, tags opentsdb.TagSet) bool {
@@ -51,7 +52,12 @@ func (s *Silence) Matches(alert string, tags opentsdb.TagSet) bool {
 }
 
 func (s Silence) ID() string {
+	if s.CachedId != "" {
+		return s.CachedId
+	}
 	h := sha1.New()
 	fmt.Fprintf(h, "%s|%s|%s%s", s.Start, s.End, s.Alert, s.Tags)
-	return fmt.Sprintf("%x", h.Sum(nil))
+	id := fmt.Sprintf("%x", h.Sum(nil))
+	s.CachedId = id
+	return id
 }

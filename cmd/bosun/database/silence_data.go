@@ -84,6 +84,7 @@ func (d *dataAccess) getSilences(ids []string, conn redis.Conn) ([]*models.Silen
 				return nil, err
 			}
 		}
+		s.CachedId = ids[idx]
 		silences = append(silences, s)
 	}
 	return silences, nil
